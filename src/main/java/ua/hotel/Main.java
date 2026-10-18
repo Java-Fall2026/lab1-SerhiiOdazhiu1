@@ -51,7 +51,7 @@ public class Main {
 
         System.out.println("\n5. Porivniannia (==, equals, hashCode)");
         Guest guest2 = Guest.of("AB123456", "Serhii", "Ivanov", LocalDate.of(1999, 1, 1));
-        Guest guest3 = Guest.of("XX999999", "Oleh", "Petrenko", LocalDate.of(2001, 4, 12));
+        Guest guest3 = Guest.of("XX999999", "oleh", "petrenko", LocalDate.of(2001, 4, 12));
 
         System.out.println("guest1 == guest2: " + (guest1 == guest2));
         System.out.println("guest1.equals(guest2): " + guest1.equals(guest2));
@@ -61,7 +61,7 @@ public class Main {
         System.out.println("\n6. Obchysliuvani metody");
         Booking booking = new Booking(room, guest1, LocalDate.of(2026, 9, 1), LocalDate.of(2026, 9, 5), "confirmed");
         System.out.println("Nights: " + HotelUtils.nights(booking));
-        System.out.println("Total price: " + HotelUtils.totalPrice(booking));
+        System.out.println("Total price: " + HotelUtils.formatMoney(HotelUtils.totalPrice(booking)));
 
         System.out.println("\n7. Vyvid cherez toString()");
         HotelPayment payment = HotelPayment.of("PAY-777", booking, HotelUtils.totalPrice(booking), LocalDate.of(2026, 9, 1));
