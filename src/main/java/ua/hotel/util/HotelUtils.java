@@ -8,8 +8,8 @@ import java.util.List;
 
 public final class HotelUtils {
 
-    public static final List<String> ALLOWED_ROOM_TYPES = List.of("SINGLE", "DOUBLE", "SUITE", "DELUXE");
-    public static final List<String> ALLOWED_BOOKING_STATUSES = List.of("CONFIRMED", "CHECKED_IN", "CHECKED_OUT", "CANCELLED");
+    static final List<String> ALLOWED_ROOM_TYPES = List.of("SINGLE", "DOUBLE", "SUITE", "DELUXE");
+    static final List<String> ALLOWED_BOOKING_STATUSES = List.of("CONFIRMED", "CHECKED_IN", "CHECKED_OUT", "CANCELLED");
 
     private HotelUtils() {}
 
@@ -32,6 +32,14 @@ public final class HotelUtils {
     public static double requirePositive(double value, String fieldName) {
         ValidationHelper.requirePositive(value, fieldName);
         return value;
+    }
+
+    public static String capitalize(String value) {
+        return FormatHelper.capitalize(value);
+    }
+
+    public static String formatMoney(double amount) {
+        return FormatHelper.formatMoney(amount);
     }
 
     // Guest

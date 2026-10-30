@@ -14,8 +14,8 @@ public class Guest extends BaseEntity{
     private Guest(String passportNumber, String firstName, String lastName, LocalDate birthDate){
         super();
         this.passportNumber = HotelUtils.requireNotBlank(passportNumber, "Passport number");
-        this.firstName = HotelUtils.requireNotBlank(firstName, "First name");
-        this.lastName = HotelUtils.requireNotBlank(lastName, "Last name");
+        this.firstName = HotelUtils.capitalize(HotelUtils.requireNotBlank(firstName, "First name"));
+        this.lastName = HotelUtils.capitalize(HotelUtils.requireNotBlank(lastName, "Last name"));
         this.birthDate = HotelUtils.validateBirthDate(birthDate);
     }
 
