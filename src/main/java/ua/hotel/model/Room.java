@@ -5,13 +5,13 @@ import java.util.Objects;
 
 public class Room extends BaseEntity{
     private final int roomNumber;
-    private final String roomType;
+    private final RoomType roomType;
     private double pricePerNight;
 
-    public Room(int roomNumber, String roomType, double pricePerNight){
+    public Room(int roomNumber, RoomType roomType, double pricePerNight){
         super();
         this.roomNumber = HotelUtils.requirePositive(roomNumber, "Room number");
-        this.roomType = HotelUtils.normalizeRoomType(roomType);
+        this.roomType = HotelUtils.requireNonNull(roomType, "Room type");
         setPricePerNight(pricePerNight);
     }
 
@@ -19,7 +19,7 @@ public class Room extends BaseEntity{
         return roomNumber;
     }
 
-    public String getRoomType(){
+    public RoomType getRoomType(){
         return roomType;
     }
 

@@ -9,9 +9,9 @@ public class Booking extends BaseEntity{
     private final Guest guest;
     private final LocalDate checkInDate;
     private final LocalDate checkOutDate;
-    private String status;
+    private BookingStatus status;
 
-    public Booking(Room room, Guest guest, LocalDate checkInDate, LocalDate checkOutDate, String status) {
+    public Booking(Room room, Guest guest, LocalDate checkInDate, LocalDate checkOutDate, BookingStatus status) {
         super();
         this.room = HotelUtils.requireNonNull(room, "Room");
         this.guest = HotelUtils.requireNonNull(guest, "Guest");
@@ -37,12 +37,12 @@ public class Booking extends BaseEntity{
         return checkOutDate;
     }
 
-    public String getStatus() {
+    public BookingStatus getStatus() {
         return status;
     }
 
-    public final void setStatus(String status) {
-        this.status = HotelUtils.normalizeBookingStatus(status);
+    public final void setStatus(BookingStatus status) {
+        this.status = HotelUtils.requireNonNull(status, "Booking status");
     }
 
     @Override     // Composite key a room cannot have more than one booking starting on the same check-in date
