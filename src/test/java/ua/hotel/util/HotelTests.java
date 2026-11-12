@@ -7,6 +7,7 @@ import ua.hotel.model.BookingStatus;
 import ua.hotel.model.Guest;
 import ua.hotel.model.Room;
 import ua.hotel.model.RoomType;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.time.LocalDate;
 
@@ -70,20 +71,31 @@ class HotelTests {
     }
 
     @Test
-    @DisplayName("parseLine rejects a negative price")
-    void parseLineNegativePrice() {
-        assertThrows(InvalidDataException.class,
-                () -> RoomCsvReader.parseLine("105,SUITE,-500.0", 7));
+    @DisplayName("parseLine keeps the original exception as cause")
+    void parseLineKeepsCause() {
+        InvalidDataException e = assertThrows(InvalidDataException.class,
+                () -> RoomCsvReader.parseLine("104,PENTHOUSE,3000.0", 6));
+        assertNotNull(e.getCause());
+        assertTrue(e.getCause() instanceof IllegalArgumentException);
     }
 
     @Test
-    @DisplayName("parseLine rejects a row with a missing column")
+    @DisplayName("parseLine rejects a negative price and reports the line")
+    void parseLineNegativePrice() {
+        InvalidDataException e = assertThrows(InvalidDataException.class,
+                () -> RoomCsvReader.parseLine("105,SUITE,-500.0", 7));
+        assertTrue(e.getMessage().contains("Line 7"));
+        assertNotNull(e.getCause(), "cause must be preserved");
+    }
+
+    @Test
+    @DisplayName("parseLine rejects a row with a missing column and reports the line")
     void parseLineWrongColumnCount() {
         InvalidDataException e = assertThrows(InvalidDataException.class,
                 () -> RoomCsvReader.parseLine("106,DOUBLE", 8));
+        assertTrue(e.getMessage().contains("Line 8"));
         assertTrue(e.getMessage().contains("expected 3 columns"));
     }
-
     // --- calculated methods ---
 
     @Test

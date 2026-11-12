@@ -37,9 +37,9 @@ public class RoomCsvReader {
                 }
             }
         } catch (FileNotFoundException | SecurityException e) {
-            log.error("Cannot open file {}: {}", path, e.getMessage());
+            log.error("Cannot open file {}", path, e);
         } catch (IOException e) {
-            log.error("Read error in {}: {}", path, e.getMessage());
+            log.error("Read error in {}", path, e);
         } finally {
             log.info("Reading finished, rooms loaded: {}", rooms.size());
         }
