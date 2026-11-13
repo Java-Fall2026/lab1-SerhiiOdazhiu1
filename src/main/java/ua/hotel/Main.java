@@ -10,7 +10,13 @@ import ua.hotel.util.HotelUtils;
 
 import java.time.LocalDate;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import ua.hotel.util.RoomCsvReader;
+import java.util.List;
+
 public class Main {
+    private static final Logger log = LoggerFactory.getLogger(Main.class);
     public static void main(String[] args) {
 
         // 1
@@ -75,5 +81,29 @@ public class Main {
         System.out.println(room);
         System.out.println(booking);
         System.out.println(payment);
+
+        // 7. CSV reading: valid and invalid rows
+        System.out.println("\n7. Chytannia CSV-faila");
+        List<Room> rooms = RoomCsvReader.read("data/rooms.csv");
+        System.out.println("Zavantazheno kimnat: " + rooms.size());
+
+        // 8. Missing file does not stop the program
+        System.out.println("\n8. Vidsutnii fail");
+        List<Room> none = RoomCsvReader.read("data/none.csv");
+        System.out.println("Zavantazheno kimnat: " + none.size());
+
+        // 9. Invalid value in a setter of a mutable class
+        System.out.println("\n9. Nevalidne znachennia v setteri");
+        System.out.println("Tsina do: " + room.getPricePerNight());
+        try {
+            room.setPricePerNight(-500.0);
+        } catch (IllegalArgumentException e) {
+            log.error("Setter rejected price: {}", e.getMessage());
+        }
+        System.out.println("Tsina pislia: " + room.getPricePerNight());
+
+        // 10. Logging levels
+        System.out.println("\n10. Rivni lohuvannia");
+        log.info("Program finished, rooms from file: {}", rooms.size());
     }
 }
