@@ -15,6 +15,13 @@ import org.slf4j.LoggerFactory;
 import ua.hotel.util.RoomCsvReader;
 import java.util.List;
 
+import ua.hotel.util.GenericRepository;
+import ua.hotel.util.DuplicateIdentityException;
+import ua.hotel.model.Guest;
+import ua.hotel.model.HotelPayment;
+import ua.hotel.util.DuplicateIdentityException;
+import ua.hotel.util.GenericRepository;
+
 public class Main {
     private static final Logger log = LoggerFactory.getLogger(Main.class);
     public static void main(String[] args) {
@@ -105,5 +112,55 @@ public class Main {
         // 10. Logging levels
         System.out.println("\n10. Rivni lohuvannia");
         log.info("Program finished, rooms from file: {}", rooms.size());
+
+        // 11. Repository filled from CSV
+        System.out.println("\n11. Repozytorii z CSV");
+        GenericRepository<Room> roomRepo =
+                new GenericRepository<>("rooms", r -> String.valueOf(r.getRoomNumber()));
+        for (Room r : rooms) {
+            roomRepo.addIfAbsent(r);
+        }
+        System.out.println("Rozmir repozytoriia: " + roomRepo.size());
+
+        // Duplicate from CSV: add() must throw, addIfAbsent() must return false
+        try {
+            roomRepo.add(new Room(101, RoomType.SINGLE, 900.0));
+        } catch (DuplicateIdentityException e) {
+            System.out.println("Dublikat: " + e.getMessage());
+        }
+        System.out.println("addIfAbsent: " + roomRepo.addIfAbsent(new Room(101, RoomType.SINGLE, 900.0)));
+
+        // 12. Three repositories of different types: search found / not found
+        System.out.println("\n12. Tri repozytoriii riznykh typiv");
+        GenericRepository<Guest> guestRepo =
+                new GenericRepository<>("guests", Guest::passportNumber);
+        guestRepo.add(new Guest("AB123456", "Oleh", "Petrenko", LocalDate.of(2001, 4, 12)));
+
+        GenericRepository<Room> roomRepo2 =
+                new GenericRepository<>("rooms-typed", r -> String.valueOf(r.getRoomNumber()));
+        roomRepo2.add(new Room(201, RoomType.SUITE, 2000.0));
+
+        GenericRepository<HotelPayment> paymentRepo =
+                new GenericRepository<>("payments", HotelPayment::paymentId);
+        paymentRepo.add(new HotelPayment("PAY-900", booking, 4800.0, LocalDate.of(2026, 9, 1)));
+
+        System.out.println("Guest AB123456 found: " + guestRepo.findByIdentity("AB123456").isPresent());
+        System.out.println("Guest ZZ000000 found: " + guestRepo.findByIdentity("ZZ000000").isPresent());
+        System.out.println("Room 201 found: " + roomRepo2.findByIdentity("201").isPresent());
+        System.out.println("Payment PAY-900 found: " + paymentRepo.findByIdentity("PAY-900").isPresent());
+
+// 13. Duplicate: add() catches the exception, addIfAbsent() returns false
+        System.out.println("\n13. Dublikat: add i addIfAbsent");
+        try {
+            roomRepo2.add(new Room(201, RoomType.SUITE, 2000.0));
+        } catch (DuplicateIdentityException e) {
+            System.out.println("add: " + e.getMessage());
+        }
+        System.out.println("addIfAbsent: " + roomRepo2.addIfAbsent(new Room(201, RoomType.SUITE, 2000.0)));
+
+// 14. Remove present and missing
+        System.out.println("\n14. Vydalennia");
+        System.out.println("Remove 201: " + roomRepo2.removeByIdentity("201"));
+        System.out.println("Remove 201 again: " + roomRepo2.removeByIdentity("201"));
     }
 }
