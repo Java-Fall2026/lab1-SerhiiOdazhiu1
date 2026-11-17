@@ -15,6 +15,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import ua.hotel.model.HotelPayment;
+
 class HotelTests {
 
     private Booking sampleBooking() {
@@ -115,5 +117,30 @@ class HotelTests {
     void switchExpressions() {
         assertEquals("Dvomisnyi", HotelUtils.roomTypeLabel(RoomType.DOUBLE));
         assertEquals("Vyselyty", HotelUtils.availableAction(BookingStatus.CHECKED_IN));
+    }
+
+    @Test
+    @DisplayName("Repository works with a record, a mutable class and a second record")
+    void repositoryWorksWithThreeTypes() {
+        // 1. Record: identity is the passport number
+        GenericRepository<Guest> guests =
+                new GenericRepository<>("guests", Guest::passportNumber);
+        guests.add(new Guest("AB123456", "Oleh", "Petrenko", LocalDate.of(2000, 1, 1)));
+
+        // 2. Mutable class: identity is the room number, which never changes
+        GenericRepository<Room> rooms =
+                new GenericRepository<>("rooms", room -> String.valueOf(room.getRoomNumber()));
+        rooms.add(new Room(101, RoomType.DOUBLE, 1200.0));
+
+        // 3. Second record: identity is the payment ID
+        GenericRepository<HotelPayment> payments =
+                new GenericRepository<>("payments", HotelPayment::paymentId);
+        Booking booking = sampleBooking();
+        payments.add(new HotelPayment("PAY-777", booking, 4800.0, LocalDate.of(2026, 9, 1)));
+
+        assertTrue(guests.findByIdentity("AB123456").isPresent());
+        assertTrue(rooms.findByIdentity("101").isPresent());
+        assertTrue(payments.findByIdentity("PAY-777").isPresent());
+        assertTrue(guests.findByIdentity("ZZ000000").isEmpty());
     }
 }
